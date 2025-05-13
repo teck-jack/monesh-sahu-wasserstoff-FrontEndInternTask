@@ -13,8 +13,15 @@ type EditorProps = {
   name: string;
 };
 
+//
+//  editor component its handles:
+// Real-time collaboration
+// user- tracking
+// Change and
+// Editor initialization and cleanup
+//
 export function Editor({ name }: EditorProps) {
-  // Get the current document from Liveblocks storage
+  // Get current document content from Liveblocks storage
   const document = useStorage((root) => root.document);
   
   // Mutation for updating the shared document
@@ -25,6 +32,7 @@ export function Editor({ name }: EditorProps) {
     []
   );
 
+  // Current user's presence data
   const me = useSelf();
   const updateMyPresence = useUpdateMyPresence();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -42,35 +50,29 @@ export function Editor({ name }: EditorProps) {
     }
   }, [name, updateMyPresence, me?.presence.color, isInitialized]);
 
+  // Handler for tracking changes
   const handleChange = useCallback(() => {
     updateMyPresence({ 
       lastChange: Date.now(),
-      name: me?.presence.name || name
+      name: me?.presence.name || name // Ensure name is always set
     });
   }, [updateMyPresence, me?.presence.name, name]);
 
-  // Configure Liveblocks extension for Tiptap
+  // Connect Tiptap to Liveblocks
   const liveblocks = useLiveblocksExtension({
-    storage: {
-      document: {
-        type: "string",
-        default: "",
-      },
-    },
-    onStorageUpdate: ({ storage }) => {
-      const content = storage.document;
-      if (content !== editor?.getHTML()) {
-        editor?.commands.setContent(content);
-      }
+    document,
+    onUpdate: (update: { editor: { getHTML: () => string; }; }) => {
+      updateDocument(update.editor.getHTML());
+      handleChange();
     },
   });
 
   // Initialize Tiptap editor
   const editor = useEditor({
     extensions: [
-      liveblocks,
+      liveblocks, // Liveblocks collaboration extension
       StarterKit.configure({
-        history: false,
+        history: false, // Disable local history since we're using Liveblocks
       }),
     ],
     editorProps: {
@@ -78,14 +80,12 @@ export function Editor({ name }: EditorProps) {
         class: "prose max-w-none focus:outline-none p-4",
       },
     },
-    onUpdate: ({ editor }) => {
-      // Update the shared document when local changes occur
-      updateDocument(editor.getHTML());
+    onUpdate: () => {
       handleChange();
     },
   });
 
-  // Set initial content
+  // Set initial content if editor is empty
   useEffect(() => {
     if (editor && document && editor.isEmpty && !editor.isDestroyed) {
       editor.commands.setContent(document);
@@ -105,6 +105,7 @@ export function Editor({ name }: EditorProps) {
     return null;
   }
 
+  // Render editor with all collaborative features
   return (
     <div className="relative">
       <ChangeIndicators />
