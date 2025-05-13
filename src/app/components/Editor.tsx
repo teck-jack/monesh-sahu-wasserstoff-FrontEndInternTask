@@ -59,18 +59,16 @@ export function Editor({ name }: EditorProps) {
   }, [updateMyPresence, me?.presence.name, name]);
 
   // Connect Tiptap to Liveblocks
-  const liveblocks = useLiveblocksExtension({
-    document,
-    onUpdate: (update: { editor: { getHTML: () => string; }; }) => {
-      updateDocument(update.editor.getHTML());
-      handleChange();
-    },
-  });
+  const liveblocks = useLiveblocksExtension();
 
-  // Initialize Tiptap editor
+  // Initialize Tiptap editor with storage binding
   const editor = useEditor({
     extensions: [
-      liveblocks, // Liveblocks collaboration extension
+      liveblocks.configure({
+        storage: {
+          document: document
+        }
+      }),
       StarterKit.configure({
         history: false, // Disable local history since we're using Liveblocks
       }),
@@ -80,7 +78,8 @@ export function Editor({ name }: EditorProps) {
         class: "prose max-w-none focus:outline-none p-4",
       },
     },
-    onUpdate: () => {
+    onUpdate: ({ editor }) => {
+      updateDocument(editor.getHTML());
       handleChange();
     },
   });
