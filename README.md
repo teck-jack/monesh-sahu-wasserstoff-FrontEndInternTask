@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Real-Time Collaborative Editor
 
-## Getting Started
 
-First, run the development server:
+A full-featured collaborative text editor that enables multiple users to edit documents simultaneously with live updates. Built with Next.js, Liveblocks, and Tiptap.
 
-```bash
+## ✨ Features
+
+- **Real-time collaboration** - See changes from other users instantly
+- **Live cursors** - Visual indicators showing who's editing where
+- **Rich text editing** - Basic formatting options (bold, italic, headings, etc.)
+- **Change tracking** - View recent edits with timestamps
+- **Comment threads** - Discuss specific parts of the document
+- **User presence** - See who's currently active in the document
+- **Responsive design** - Works on desktop and mobile devices
+
+## 🛠 Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Real-time**: [Liveblocks](https://liveblocks.io/)
+- **Text Editor**: [Tiptap](https://tiptap.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Language**: TypeScript
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm 
+- Liveblocks account (free tier available)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   gh repo clone teck-jack/monesh-sahu-wasserstoff-FrontEndInternTask
+   
+Install dependencies:
+
+bash
+npm install
+
+bash
+// use this cmd to run it 
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🖥 Usage
+First Visit:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Enter your name to join the editor
 
-## Learn More
+You'll be assigned a unique color that identifies you
 
-To learn more about Next.js, take a look at the following resources:
+Editing:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Start typing - changes appear instantly for all collaborators
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Use the floating toolbar for text formatting
 
-## Deploy on Vercel
+See other users' cursors and selections in real-time
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Collaboration:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Click the comment icon to start a discussion thread
+
+View active users in the participant list
+
+Check the "Recent Changes" panel for edit history
+
+📂 Project Structure
+collaborative-editor/
+├── app/
+│   ├── layout.tsx          # Root layout component
+│   └── page.tsx            # Main editor page
+├── components/
+│   ├── Editor.tsx          # Core editor component
+│   ├── Cursors.tsx         # Live cursors display
+│   ├── ChangeIndicator.tsx # Change history panel
+│   ├── Threads.tsx         # Comment threads
+│   ├── UserList.tsx        # Active participants list
+│   └── NameInput.tsx       # Username prompt
+├── liveblocks.config.ts    # Liveblocks configuration
+└── public/                 # Static assets
+
