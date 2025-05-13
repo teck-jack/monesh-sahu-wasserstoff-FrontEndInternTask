@@ -13,15 +13,8 @@ type EditorProps = {
   name: string;
 };
 
-//
-//  editor component its handles:
-// Real-time collaboration
-// user- tracking
-// Change and
-// Editor initialization and cleanup
-//
 export function Editor({ name }: EditorProps) {
-  // Get current document content from Liveblocks storage
+  // Get the current document from Liveblocks storage
   const document = useStorage((root) => root.document);
   
   // Mutation for updating the shared document
@@ -32,7 +25,6 @@ export function Editor({ name }: EditorProps) {
     []
   );
 
-  // Current user's presence data
   const me = useSelf();
   const updateMyPresence = useUpdateMyPresence();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -50,15 +42,14 @@ export function Editor({ name }: EditorProps) {
     }
   }, [name, updateMyPresence, me?.presence.color, isInitialized]);
 
-  // Handler for tracking changes
   const handleChange = useCallback(() => {
     updateMyPresence({ 
       lastChange: Date.now(),
-      name: me?.presence.name || name // Ensure name is always set
+      name: me?.presence.name || name
     });
   }, [updateMyPresence, me?.presence.name, name]);
 
-  // Connect Tiptap to Liveblocks
+  // Configure Liveblocks extension for Tiptap
   const liveblocks = useLiveblocksExtension({
     storage: {
       document: {
@@ -77,9 +68,9 @@ export function Editor({ name }: EditorProps) {
   // Initialize Tiptap editor
   const editor = useEditor({
     extensions: [
-      liveblocks, // Liveblocks collaboration extension
+      liveblocks,
       StarterKit.configure({
-        history: false, // Disable local history since we're using Liveblocks
+        history: false,
       }),
     ],
     editorProps: {
@@ -87,12 +78,14 @@ export function Editor({ name }: EditorProps) {
         class: "prose max-w-none focus:outline-none p-4",
       },
     },
-    onUpdate: () => {
+    onUpdate: ({ editor }) => {
+      // Update the shared document when local changes occur
+      updateDocument(editor.getHTML());
       handleChange();
     },
   });
 
-  // Set initial content if editor is empty
+  // Set initial content
   useEffect(() => {
     if (editor && document && editor.isEmpty && !editor.isDestroyed) {
       editor.commands.setContent(document);
@@ -112,7 +105,6 @@ export function Editor({ name }: EditorProps) {
     return null;
   }
 
-  // Render editor with all collaborative features
   return (
     <div className="relative">
       <ChangeIndicators />
