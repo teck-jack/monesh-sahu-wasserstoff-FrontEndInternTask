@@ -60,10 +60,17 @@ export function Editor({ name }: EditorProps) {
 
   // Connect Tiptap to Liveblocks
   const liveblocks = useLiveblocksExtension({
-    document,
-    onUpdate: (update: { editor: { getHTML: () => string; }; }) => {
-      updateDocument(update.editor.getHTML());
-      handleChange();
+    storage: {
+      document: {
+        type: "string",
+        default: "",
+      },
+    },
+    onStorageUpdate: ({ storage }) => {
+      const content = storage.document;
+      if (content !== editor?.getHTML()) {
+        editor?.commands.setContent(content);
+      }
     },
   });
 
